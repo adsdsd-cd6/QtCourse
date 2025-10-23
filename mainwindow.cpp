@@ -161,4 +161,4 @@ void MainWindow::on_btnDeng_clicked()
     QString result = calculation();
     ui->display->setText(result);
 }
-
+//1
