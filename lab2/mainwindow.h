@@ -18,10 +18,42 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_actionAbout_triggered();
+
+    void on_actionFind_triggered();
+
+    void on_actionReplace_triggered();
+
+    void on_actionNew_triggered();
+
+    void on_actionOpen_triggered();
+
+    void on_actionSave_triggered();
+
+    void on_actionASave_triggered();
+
+    void on_textEdit_textChanged();
+
+    void on_actionUndo_triggered();
+
+    void on_actionRedo_triggered();
+
+    void on_actionCut_triggered();
+
+    void on_actionFuzhi_triggered();
+
+    void on_actionNiantie_triggered();
+
 private:
     Ui::MainWindow *ui;
 
     QLabel statusCursorLabel;
     QLabel statusLabel;
+
+    QString filePath;
+    bool textChanged;
+
+    bool userEditConfirmed();
 };
 #endif // MAINWINDOW_H

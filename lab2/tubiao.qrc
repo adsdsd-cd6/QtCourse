@@ -19,5 +19,6 @@
         <file>image/image/tool.svg</file>
         <file>image/image/undo.svg</file>
         <file>image/image/wrap.svg</file>
+        <file>image/image/1.png</file>
     </qresource>
 </RCC>
