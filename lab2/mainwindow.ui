@@ -31,7 +31,7 @@
      <number>1</number>
     </property>
     <item>
-     <widget class="QPlainTextEdit" name="textEdit"/>
+     <widget class="CodeEditor" name="textEdit"/>
     </item>
    </layout>
   </widget>
@@ -79,7 +79,7 @@
     <addaction name="actionLine"/>
     <addaction name="actionZitiColor"/>
     <addaction name="separator"/>
-    <addaction name="actionZitiBlaackgroundColor"/>
+    <addaction name="actionZitiBackgroundColor"/>
     <addaction name="actionEditorBackgroundcolor"/>
    </widget>
    <widget class="QMenu" name="menu_V">
@@ -318,6 +318,9 @@
    </property>
   </action>
   <action name="actionHuanhang">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="tubiao.qrc">
      <normaloff>:/image/image/wrap.svg</normaloff>:/image/image/wrap.svg</iconset>
@@ -364,7 +367,7 @@
     <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
-  <action name="actionZitiBlaackgroundColor">
+  <action name="actionZitiBackgroundColor">
    <property name="text">
     <string>字体背景色</string>
    </property>
@@ -381,6 +384,9 @@
    </property>
   </action>
   <action name="actionToot">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="tubiao.qrc">
      <normaloff>:/image/image/tool.svg</normaloff>:/image/image/tool.svg</iconset>
@@ -393,6 +399,9 @@
    </property>
   </action>
   <action name="actionState">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="tubiao.qrc">
      <normaloff>:/image/image/status.svg</normaloff>:/image/image/status.svg</iconset>
@@ -413,6 +422,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CodeEditor</class>
+   <extends>QPlainTextEdit</extends>
+   <header location="global">codeeditor.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="tubiao.qrc"/>
  </resources>

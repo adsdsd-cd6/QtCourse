@@ -6,6 +6,8 @@
 #include "QFileDialog"
 #include "QMessageBox"
 #include "QTextStream"
+#include "QColorDialog"
+#include "QFontDialog"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -17,17 +19,37 @@ MainWindow::MainWindow(QWidget *parent)
     on_actionNew_triggered();
 
 
-    statusLabel.setMaximumWidth(150);
+    statusLabel.setMaximumWidth(180);
     statusLabel.setText("Length " + QString::number(0) + "   lines " + QString::number(1));
     ui->statusbar->addPermanentWidget(&statusLabel);
 
-    statusCursorLabel.setMaximumWidth(150);
+    statusCursorLabel.setMaximumWidth(180);
     statusCursorLabel.setText("Ln " + QString::number(0) + "   Col " + QString::number(1));
     ui->statusbar->addPermanentWidget(&statusCursorLabel);
 
     QLabel *author = new QLabel(ui->statusbar);
     author->setText(tr("冯皓焌"));
     ui->statusbar->addPermanentWidget(author);
+
+    ui->actionUndo->setEnabled(false);
+    ui->actionRedo->setEnabled(false);
+    ui->actionFuzhi->setEnabled(false);
+    ui->actionNiantie->setEnabled(false);
+    ui->actionCut->setEnabled(false);
+
+    QPlainTextEdit::LineWrapMode mode = ui->textEdit->lineWrapMode();
+
+    if( mode == QTextEdit::NoWrap){ui->textEdit->setLineWrapMode(QPlainTextEdit::WidgetWidth);
+
+        ui->actionHuanhang->setChecked(false);
+    }else{
+        ui->textEdit->setLineWrapMode(QPlainTextEdit::NoWrap);
+
+        ui->actionHuanhang->setChecked(true);
+    }
+
+    ui->actionToot->setChecked(true);
+    ui->actionState->setChecked(true);
 
 }
 
@@ -46,14 +68,14 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::on_actionFind_triggered()
 {
-    SearchDialog dlg;
+    SearchDialog dlg(this,ui->textEdit);
     dlg.exec();
 }
 
 
 void MainWindow::on_actionReplace_triggered()
 {
-    ReplaceDialog dlg;
+    ReplaceDialog dlg(this,ui->textEdit);
     dlg.exec();
 }
 
@@ -162,6 +184,10 @@ void MainWindow::on_textEdit_textChanged()
         this->setWindowTitle("*"+ this->windowTitle());
         textChanged =true;
     }
+
+    statusLabel.setText("Length " + QString::number(ui->textEdit->toPlainText().length())
+                        + "   lines " +
+                        QString::number(ui->textEdit->document()->lineCount()));
 }
 
 bool MainWindow::userEditConfirmed()
@@ -193,30 +219,148 @@ bool MainWindow::userEditConfirmed()
 
 void MainWindow::on_actionUndo_triggered()
 {
-
+    ui->textEdit->undo();
 }
 
 
 void MainWindow::on_actionRedo_triggered()
 {
-
+    ui->textEdit->redo();
 }
 
 
 void MainWindow::on_actionCut_triggered()
 {
-
+    ui->textEdit->cut();
+    ui->actionNiantie->setEnabled(true);
 }
 
 
 void MainWindow::on_actionFuzhi_triggered()
 {
-
+    ui->textEdit->copy();
+    ui->actionNiantie->setEnabled(true);
 }
 
 
 void MainWindow::on_actionNiantie_triggered()
 {
+    ui->textEdit->paste();
+}
 
+
+void MainWindow::on_textEdit_copyAvailable(bool b)
+{
+    ui->actionFuzhi->setEnabled(b);
+    ui->actionCut->setEnabled(b);
+}
+
+
+void MainWindow::on_textEdit_redoAvailable(bool b)
+{
+    ui->actionRedo->setEnabled(b);
+}
+
+
+void MainWindow::on_textEdit_undoAvailable(bool b)
+{
+    ui->actionUndo->setEnabled(b);
+}
+
+
+void MainWindow::on_actionZitiColor_triggered()
+{
+    QColor color = QColorDialog::getColor(Qt::black, this, "选择颜色");
+    if(color.isValid()){
+        ui->textEdit->setStyleSheet(QString("QPlainTextEdit {color: %1}").arg(color.name()));
+    }
+}
+
+
+void MainWindow::on_actionZitiBackgroundColor_triggered()
+{
+    QColor color = QColorDialog::getColor(Qt::black, this, "选择颜色");
+    if(color.isValid()){
+        ui->textEdit->setStyleSheet(QString("QPlainTextEdit {background-color: %1}").arg(color.name()));
+    }
+}
+
+
+void MainWindow::on_actionEditorBackgroundcolor_triggered()
+{
+
+}
+
+
+void MainWindow::on_actionHuanhang_triggered()
+{
+    QPlainTextEdit::LineWrapMode mode = ui->textEdit->lineWrapMode();
+
+    if( mode == QTextEdit::NoWrap){ui->textEdit->setLineWrapMode(QPlainTextEdit::WidgetWidth);
+
+        ui->actionHuanhang->setChecked(true);
+    }else{
+        ui->textEdit->setLineWrapMode(QPlainTextEdit::NoWrap);
+
+        ui->actionHuanhang->setChecked(false);
+    }
+}
+
+
+void MainWindow::on_actionZiti_triggered()
+{
+    bool ok = false;
+    QFont font = QFontDialog::getFont(&ok, this);
+    if(ok)
+        ui->textEdit->setFont(font);
+}
+
+
+void MainWindow::on_actionToot_triggered()
+{
+    bool visible =ui->toolBar->isVisible();
+    ui->toolBar->setVisible(!visible);
+    ui->actionToot->setChecked(!visible);
+}
+
+
+void MainWindow::on_actionState_triggered()
+{
+    bool visible =ui->statusbar->isVisible();
+    ui->statusbar->setVisible(!visible);
+    ui->actionState->setChecked(!visible);
+}
+
+
+void MainWindow::on_actionAll_triggered()
+{
+    ui->textEdit->selectAll();
+}
+
+
+void MainWindow::on_actionExit_triggered()
+{
+    if(userEditConfirmed())
+    exit(0);
+}
+
+
+void MainWindow::on_textEdit_cursorPositionChanged()
+{
+    int col = 0;
+    int ln = 0;
+    int flg = -1;
+    int pos = ui->textEdit->textCursor().position();
+    QString text = ui->textEdit->toPlainText();
+
+    for(int i = 0; i<pos; i++){
+        if( text[i]=='\n'){
+            ln ++;
+            flg = i;
+        }
+    }
+    flg++;
+    col = pos -flg;
+    statusCursorLabel.setText("Ln " + QString::number(ln + 1) + "   Col " + QString::number(col + 1));
 }
 
